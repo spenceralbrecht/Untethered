@@ -182,6 +182,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             R.id.setDefaultLauncher -> {
                 prefs.hideSetDefaultLauncher = true
                 binding.setDefaultLauncher.visibility = View.GONE
+                updateHomeAppsBottomMargin()
                 if (viewModel.isUntetheredDefault.value != true) {
                     requireContext().showToast(R.string.set_as_default_launcher)
                     findNavController().navigate(R.id.action_mainFragment_to_settingsFragment)
@@ -211,6 +212,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             }
             if (binding.firstRunTips.isVisible) return@Observer
             binding.setDefaultLauncher.isVisible = it.not() && prefs.hideSetDefaultLauncher.not()
+            updateHomeAppsBottomMargin()
         })
         viewModel.homeAppAlignment.observe(viewLifecycleOwner) {
             setHomeAlignment(it)
@@ -642,7 +644,18 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun homeAppsBottomMargin(): Int =
-        if (prefs.homeAppsNum > 4) 104.dpToPx() else 132.dpToPx()
+        when {
+            prefs.homeAppsNum <= 4 -> 132.dpToPx()
+            binding.setDefaultLauncher.isVisible -> 104.dpToPx()
+            else -> 72.dpToPx()
+        }
+
+    private fun updateHomeAppsBottomMargin() {
+        (binding.homeAppsLayout.layoutParams as FrameLayout.LayoutParams).apply {
+            bottomMargin = homeAppsBottomMargin()
+            binding.homeAppsLayout.layoutParams = this
+        }
+    }
 
     private fun launchAppOrShortcut(
         appName: String,

@@ -9,6 +9,7 @@
 - The home year-progress graph must use 52 weekly dots and reader-facing copy should say weeks remaining rather than `x of y weeks complete`.
 - Selected home app shortcuts should stay visually clean without decorative rings, but empty home slots must remain visible with a clear placeholder target such as a faint circle plus button.
 - Home app counts from 1 through 8 must render in the same bottom shortcut area with consistent icon sizing; never put overflow shortcuts in a separate top mini row.
+- Two-row home shortcut layouts must be screenshot-checked for vertical spacing both with and without the `Set as default launcher` prompt, because the prompt changes how low the shortcut group can sit.
 - Home design QA must explicitly check phone screenshots for app shortcut clipping at the screen edges and overlap between shortcuts, the year-progress graph, and the year-progress label.
 
 ## Firebase App Distribution
