@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
     <permission
-        android:name="app.olauncher.permission.START_MONITORING"
+        android:name="app.untethered.permission.START_MONITORING"
         android:protectionLevel="signature" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.NFC" />
@@ -168,14 +169,14 @@
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/vnd.app.olauncher.silo" />
+                <data android:mimeType="application/vnd.app.untethered.untethered" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.cj.tapblok.ShortcutHandlerActivity"
             android:exported="true"
             android:label="@string/title_activity_shortcut_handler"
-            android:permission="app.olauncher.permission.START_MONITORING"
+            android:permission="app.untethered.permission.START_MONITORING"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
@@ -188,7 +189,7 @@
             android:foregroundServiceType="specialUse">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Monitors selected app usage to provide Silo blocking." />
+                android:value="Monitors selected app usage to provide Untethered blocking." />
         </service>
         <service
             android:name="com.cj.tapblok.WebsiteBlockVpnService"

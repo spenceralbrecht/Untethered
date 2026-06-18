@@ -105,8 +105,8 @@
         <item name="android:layout_height">64dp</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:layout_marginEnd">8dp</item>
-        <item name="android:background">@drawable/focus_home_shortcut</item>
-        <item name="android:padding">12dp</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">6dp</item>
         <item name="android:scaleType">centerInside</item>
     </style>
 
@@ -115,8 +115,8 @@
         <item name="android:layout_height">34dp</item>
         <item name="android:layout_marginStart">4dp</item>
         <item name="android:layout_marginEnd">4dp</item>
-        <item name="android:background">@drawable/focus_home_shortcut</item>
-        <item name="android:padding">7dp</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">2dp</item>
         <item name="android:scaleType">centerInside</item>
     </style>
 

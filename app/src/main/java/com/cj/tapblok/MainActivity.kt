@@ -1,7 +1,7 @@
 package com.cj.tapblok
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.Manifest
 import android.app.Activity
@@ -353,7 +353,7 @@ fun MainScreen() {
                         RequirementPrompt(
                             icon = Icons.Default.MyLocation,
                             title = "Enable home detection",
-                            description = "Location lets Silo know when home rules should activate.",
+                            description = "Location lets Untethered know when home rules should activate.",
                             actionLabel = "Grant location",
                             onAction = {
                                 fineLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -622,7 +622,7 @@ fun MainScreen() {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Silo needs usage access and overlay permission before it can block selected apps.",
+                    text = "Untethered needs usage access and overlay permission before it can block selected apps.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF9A9A9A),
                     textAlign = TextAlign.Center
@@ -669,7 +669,7 @@ private fun HomeTopBar(isServiceRunning: Boolean) {
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
-                text = "Silo",
+                text = "Untethered",
                 style = MaterialTheme.typography.headlineLarge,
                 color = Color.White
             )

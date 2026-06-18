@@ -1,7 +1,7 @@
 package com.cj.tapblok
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.app.Application
 import android.app.NotificationChannel
@@ -22,7 +22,7 @@ class App : Application() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Silo Blocking"
+            val name = "Untethered Blocking"
             val descriptionText = "App and website blocking sessions"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(AppMonitoringService.CHANNEL_ID, name, importance).apply {

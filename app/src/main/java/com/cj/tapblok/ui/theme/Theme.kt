@@ -1,7 +1,7 @@
 package com.cj.tapblok.ui.theme
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme

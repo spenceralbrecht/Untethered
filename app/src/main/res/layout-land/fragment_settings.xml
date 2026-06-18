@@ -70,7 +70,7 @@
                     android:text="@string/set_as_default_launcher" />
 
                 <TextView
-                    android:id="@+id/aboutOlauncher"
+                    android:id="@+id/aboutUntethered"
                     style="@style/TextSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -1,7 +1,7 @@
 package com.cj.tapblok.ui.theme
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,7 +1,7 @@
 package com.cj.tapblok
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.app.PendingIntent
 import android.net.ConnectivityManager
@@ -134,7 +134,7 @@ class WebsiteBlockVpnService : VpnService() {
     }
 
     private fun notification() = NotificationCompat.Builder(this, AppMonitoringService.CHANNEL_ID)
-        .setContentTitle("Silo Website Blocking")
+        .setContentTitle("Untethered Website Blocking")
         .setContentText("Website domains are blocked during this session.")
         .setSmallIcon(R.mipmap.ic_launcher)
         .setContentIntent(
@@ -167,7 +167,7 @@ class WebsiteBlockVpnService : VpnService() {
         if (packetJob != null) return
 
         vpnInterface = Builder()
-            .setSession("Silo Website Blocking")
+            .setSession("Untethered Website Blocking")
             .setMtu(1500)
             .addAddress(VPN_ADDRESS, 32)
             .addAddress(VPN_ADDRESS_V6, 128)

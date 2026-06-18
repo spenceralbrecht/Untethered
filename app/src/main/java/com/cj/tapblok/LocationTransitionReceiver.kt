@@ -1,7 +1,7 @@
 package com.cj.tapblok
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.content.BroadcastReceiver
 import android.content.Context

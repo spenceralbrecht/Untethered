@@ -1,7 +1,7 @@
 package com.cj.tapblok
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.app.PendingIntent
 import android.app.Service
@@ -66,7 +66,7 @@ class AppMonitoringService : Service() {
         )
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Silo is Active")
+            .setContentTitle("Untethered is Active")
             .setContentText("App and website blocking are running.")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent)

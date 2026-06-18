@@ -1,7 +1,7 @@
 package com.cj.tapblok
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.os.Bundle
 import android.widget.Toast
@@ -95,9 +95,9 @@ private fun HardModeScreen(modifier: Modifier = Modifier) {
                 )
                 Text(
                     text = if (isDeviceOwner) {
-                        "Silo can block uninstall and suspend selected apps while a block is active."
+                        "Untethered can block uninstall and suspend selected apps while a block is active."
                     } else {
-                        "Normal Android apps can be uninstalled, force-stopped, or stripped of permissions. Hard Mode requires provisioning Silo as the device owner with ADB."
+                        "Normal Android apps can be uninstalled, force-stopped, or stripped of permissions. Hard Mode requires provisioning Untethered as the device owner with ADB."
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -133,13 +133,13 @@ private fun HardModeScreen(modifier: Modifier = Modifier) {
                     val blocked = HardModeManager.setSelfUninstallBlocked(context, true)
                     Toast.makeText(
                         context,
-                        if (blocked) "Silo uninstall is blocked." else "Could not block uninstall.",
+                        if (blocked) "Untethered uninstall is blocked." else "Could not block uninstall.",
                         Toast.LENGTH_SHORT
                     ).show()
                     isDeviceOwner = HardModeManager.isDeviceOwner(context)
                 }
             ) {
-                Text("Block Silo Uninstall")
+                Text("Block Untethered Uninstall")
             }
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
@@ -147,12 +147,12 @@ private fun HardModeScreen(modifier: Modifier = Modifier) {
                     val unblocked = HardModeManager.setSelfUninstallBlocked(context, false)
                     Toast.makeText(
                         context,
-                        if (unblocked) "Silo uninstall is allowed." else "Could not allow uninstall.",
+                        if (unblocked) "Untethered uninstall is allowed." else "Could not allow uninstall.",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             ) {
-                Text("Allow Silo Uninstall")
+                Text("Allow Untethered Uninstall")
             }
         }
     }

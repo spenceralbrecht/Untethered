@@ -1,7 +1,7 @@
 package com.cj.tapblok
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.app.PendingIntent
 import android.content.Intent
@@ -42,7 +42,7 @@ import java.io.IOException
 class NfcWriteActivity : ComponentActivity() {
 
     companion object {
-        const val NFC_MIME_TYPE = "application/vnd.app.olauncher.silo"
+        const val NFC_MIME_TYPE = "application/vnd.app.untethered.untethered"
     }
 
     private var nfcAdapter: NfcAdapter? = null

@@ -1,11 +1,11 @@
 package com.cj.tapblok.ui.theme
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import androidx.compose.ui.graphics.Color
 
-// Silo scheme: pure black surfaces, white type, dim outlines.
+// Untethered scheme: pure black surfaces, white type, dim outlines.
 val DarkPrimary = Color(0xFFFFFFFF)
 val DarkOnPrimary = Color(0xFF000000)
 val DarkPrimaryContainer = Color(0xFF161616)

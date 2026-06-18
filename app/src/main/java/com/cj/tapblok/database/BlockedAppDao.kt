@@ -1,7 +1,7 @@
 package com.cj.tapblok.database
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import androidx.room.Dao
 import androidx.room.Delete

@@ -73,11 +73,12 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/dayOfMonth"
+                android:id="@+id/batteryPercent"
                 style="@style/TextSmall"
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 android:background="@drawable/focus_home_shortcut"
+                android:contentDescription="@string/battery_percent"
                 android:fontFamily="monospace"
                 android:gravity="center"
                 android:includeFontPadding="false"
@@ -94,8 +95,9 @@
             <TextView
                 style="@style/TextSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="38dp"
                 android:fontFamily="monospace"
+                android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="☼"
                 android:textSize="29sp" />
@@ -104,11 +106,13 @@
                 android:id="@+id/tvScreenTime"
                 style="@style/TextSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="38dp"
                 android:layout_marginStart="12dp"
-                android:fontFamily="monospace"
-                android:includeFontPadding="false"
+                android:layout_gravity="center_vertical"
                 android:contentDescription="@string/uv_index"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:includeFontPadding="false"
                 android:text="--"
                 android:textSize="16sp"
                 tools:text="7" />

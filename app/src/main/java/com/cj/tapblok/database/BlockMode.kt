@@ -1,7 +1,7 @@
 package com.cj.tapblok.database
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 object BlockMode {
     const val HOME_AWARE = "HOME_AWARE"

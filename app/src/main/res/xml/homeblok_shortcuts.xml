@@ -8,8 +8,8 @@
         android:shortcutDisabledMessage="@string/shortcut_start_session_disabled">
         <!-- Must match ShortcutHandlerActivity.ACTION_START_MONITORING -->
         <intent
-            android:action="app.olauncher.START_MONITORING"
-            android:targetPackage="app.olauncher"
+            android:action="app.untethered.START_MONITORING"
+            android:targetPackage="app.untethered"
             android:targetClass="com.cj.tapblok.ShortcutHandlerActivity" />
     </shortcut>
 </shortcuts>

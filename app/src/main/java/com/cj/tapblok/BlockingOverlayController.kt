@@ -1,7 +1,7 @@
 package com.cj.tapblok
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
@@ -91,7 +91,7 @@ object BlockingOverlayController {
                 PixelFormat.OPAQUE
             ).apply {
                 gravity = Gravity.CENTER
-                title = "Silo blocker"
+                title = "Untethered blocker"
             }
 
             runCatching {
@@ -195,7 +195,7 @@ object BlockingOverlayController {
         content.addView(
             label(
                 context,
-                "Silo is covering this floating window.",
+                "Untethered is covering this floating window.",
                 17,
                 Color.rgb(82, 96, 87),
                 Typeface.NORMAL

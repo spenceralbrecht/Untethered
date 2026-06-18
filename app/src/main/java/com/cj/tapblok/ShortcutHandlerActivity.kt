@@ -1,7 +1,7 @@
 package com.cj.tapblok
 
-import app.olauncher.BuildConfig
-import app.olauncher.R
+import app.untethered.BuildConfig
+import app.untethered.R
 
 import android.os.Bundle
 import android.widget.Toast
@@ -10,7 +10,7 @@ import androidx.activity.ComponentActivity
 class ShortcutHandlerActivity : ComponentActivity() {
 
     companion object {
-        const val ACTION_START_MONITORING = "app.olauncher.START_MONITORING"
+        const val ACTION_START_MONITORING = "app.untethered.START_MONITORING"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
