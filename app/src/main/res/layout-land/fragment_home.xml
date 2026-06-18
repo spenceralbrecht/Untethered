@@ -94,13 +94,14 @@
 
             <TextView
                 style="@style/TextSmall"
-                android:layout_width="wrap_content"
+                android:layout_width="30dp"
                 android:layout_height="38dp"
                 android:fontFamily="monospace"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:text="☼"
-                android:textSize="29sp" />
+                android:text="UV"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvScreenTime"

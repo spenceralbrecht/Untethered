@@ -24,8 +24,8 @@ object UvIndexManager {
 
     suspend fun currentUvIndex(context: Context): Double? {
         val appContext = context.applicationContext
-        val coordinates = resolveCoordinates(appContext) ?: return null
         return runCatching {
+            val coordinates = resolveCoordinates(appContext) ?: return null
             withContext(Dispatchers.IO) {
                 fetchUvIndex(coordinates)
             }
@@ -47,7 +47,13 @@ object UvIndexManager {
         val homeState = LocationRuleManager.state(context)
         val latitude = homeState.latitude
         val longitude = homeState.longitude
-        return if (latitude != null && longitude != null) Coordinates(latitude, longitude) else null
+        if (latitude != null && longitude != null) {
+            return Coordinates(latitude, longitude)
+        }
+
+        return withContext(Dispatchers.IO) {
+            fetchIpCoordinates()
+        }
     }
 
     private fun hasForegroundLocationPermission(context: Context): Boolean =
@@ -116,6 +122,26 @@ object UvIndexManager {
                 .optJSONObject("current")
                 ?.optDouble("uv_index", Double.NaN)
                 ?.takeIf { it.isFinite() }
+        } finally {
+            connection.disconnect()
+        }
+    }
+
+    private fun fetchIpCoordinates(): Coordinates? {
+        val connection = (URL("https://ipwho.is/").openConnection() as HttpURLConnection).apply {
+            connectTimeout = 5_000
+            readTimeout = 5_000
+            requestMethod = "GET"
+        }
+
+        return try {
+            if (connection.responseCode !in 200..299) return null
+            val body = connection.inputStream.bufferedReader().use { it.readText() }
+            val json = JSONObject(body)
+            if (!json.optBoolean("success", true)) return null
+            val latitude = json.optDouble("latitude", Double.NaN)
+            val longitude = json.optDouble("longitude", Double.NaN)
+            if (latitude.isFinite() && longitude.isFinite()) Coordinates(latitude, longitude) else null
         } finally {
             connection.disconnect()
         }

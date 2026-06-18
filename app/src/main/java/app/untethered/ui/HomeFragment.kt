@@ -446,6 +446,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun applyHomeIcon(imageView: ImageView, icon: Drawable?, appName: String) {
+        imageView.background = null
         val drawable = icon ?: appName.toShortcutCode(homeShortcutCodes).toCodeDrawable()
         imageView.setImageDrawable(drawable)
         imageView.colorFilter = grayscaleIconFilter
@@ -454,8 +455,11 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun clearHomeIcon(imageView: ImageView) {
-        imageView.setImageDrawable(null)
-        imageView.contentDescription = null
+        imageView.setBackgroundResource(R.drawable.focus_home_shortcut)
+        imageView.setImageDrawable("+".toPlaceholderDrawable())
+        imageView.colorFilter = null
+        imageView.imageAlpha = 150
+        imageView.contentDescription = getString(R.string.select_home_app)
     }
 
     private fun String.toShortcutCode(usedCodes: MutableSet<String>): String =
@@ -520,6 +524,21 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             textAlign = Paint.Align.CENTER
             textSize = 15.dpToPx().toFloat()
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+        }
+        val y = (size / 2f) - ((paint.descent() + paint.ascent()) / 2f)
+        canvas.drawText(this, size / 2f, y, paint)
+        return BitmapDrawable(resources, bitmap)
+    }
+
+    private fun String.toPlaceholderDrawable(): Drawable {
+        val size = 32.dpToPx()
+        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+            textAlign = Paint.Align.CENTER
+            textSize = 18.dpToPx().toFloat()
+            typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
         }
         val y = (size / 2f) - ((paint.descent() + paint.ascent()) / 2f)
         canvas.drawText(this, size / 2f, y, paint)
