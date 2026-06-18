@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
+    android:background="@color/blackTrans90"
     android:orientation="vertical"
     tools:context=".ui.HomeFragment">
 
@@ -29,7 +30,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginStart="64dp"
         android:layout_marginTop="48dp"
+        android:layout_marginEnd="64dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone"
@@ -40,8 +43,11 @@
             style="@style/TextDefault"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
-            android:format12Hour="h:mm"
+            android:fontFamily="monospace"
+            android:format12Hour="hh:mm"
+            android:format24Hour="HH:mm"
+            android:includeFontPadding="false"
+            android:letterSpacing="0.08"
             android:textSize="@dimen/time_size"
             tools:text="02:34" />
 
@@ -50,9 +56,17 @@
             style="@style/TextDefault"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/focus_pill_outline"
             android:format12Hour="EEE, dd MMM"
             android:format24Hour="EEE, dd MMM"
-            android:paddingHorizontal="3dp"
+            android:fontFamily="monospace"
+            android:includeFontPadding="false"
+            android:letterSpacing="0.12"
+            android:paddingStart="20dp"
+            android:paddingEnd="22dp"
+            android:paddingVertical="10dp"
+            android:textAllCaps="true"
             android:textSize="@dimen/date_size"
             tools:text="Thu, 30 Dec" />
     </LinearLayout>
@@ -64,10 +78,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginHorizontal="74dp"
+        android:layout_marginHorizontal="64dp"
         android:layout_marginTop="72dp"
+        android:background="@drawable/focus_pill_outline"
+        android:fontFamily="monospace"
         android:gravity="center"
-        android:padding="10dp"
+        android:letterSpacing="0.08"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
         android:textSize="@dimen/date_size"
         android:visibility="gone"
         tools:text="2h 11m"
@@ -76,100 +94,93 @@
     <!-- Home apps-->
     <LinearLayout
         android:id="@+id/homeAppsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="74dp"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingVertical="@dimen/home_app_padding_vertical">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="64dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/homeApp1"
-            style="@style/TextLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/app"
-            android:paddingVertical="@dimen/home_app_padding_vertical"
-            android:tag="@string/tag_1"
-            android:visibility="gone"
-            tools:visibility="visible" />
+        <LinearLayout
+            style="@style/FocusHomeShortcutRow">
 
-        <TextView
-            android:id="@+id/homeApp2"
-            style="@style/TextLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/app"
-            android:paddingVertical="@dimen/home_app_padding_vertical"
-            android:tag="@string/tag_2"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            <TextView
+                android:id="@+id/homeApp1"
+                style="@style/FocusHomeShortcut"
+                android:hint="@string/app"
+                android:tag="@string/tag_1"
+                android:visibility="gone"
+                tools:text="ME"
+                tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/homeApp3"
-            style="@style/TextLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/app"
-            android:paddingVertical="@dimen/home_app_padding_vertical"
-            android:tag="@string/tag_3"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            <TextView
+                android:id="@+id/homeApp2"
+                style="@style/FocusHomeShortcut"
+                android:hint="@string/app"
+                android:tag="@string/tag_2"
+                android:visibility="gone"
+                tools:text="WH"
+                tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/homeApp4"
-            style="@style/TextLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/app"
-            android:paddingVertical="@dimen/home_app_padding_vertical"
-            android:tag="@string/tag_4"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            <TextView
+                android:id="@+id/homeApp3"
+                style="@style/FocusHomeShortcut"
+                android:hint="@string/app"
+                android:tag="@string/tag_3"
+                android:visibility="gone"
+                tools:text="IN"
+                tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/homeApp5"
-            style="@style/TextLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/app"
-            android:paddingVertical="@dimen/home_app_padding_vertical"
-            android:tag="@string/tag_5"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            <TextView
+                android:id="@+id/homeApp4"
+                style="@style/FocusHomeShortcut"
+                android:hint="@string/app"
+                android:tag="@string/tag_4"
+                android:visibility="gone"
+                tools:text="BR"
+                tools:visibility="visible" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/homeApp6"
-            style="@style/TextLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/app"
-            android:paddingVertical="@dimen/home_app_padding_vertical"
-            android:tag="@string/tag_6"
-            android:visibility="gone"
-            tools:visibility="visible" />
+        <LinearLayout
+            style="@style/FocusHomeShortcutRow">
 
-        <TextView
-            android:id="@+id/homeApp7"
-            style="@style/TextLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/app"
-            android:paddingVertical="@dimen/home_app_padding_vertical"
-            android:tag="@string/tag_7"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            <TextView
+                android:id="@+id/homeApp5"
+                style="@style/FocusHomeShortcut"
+                android:hint="@string/app"
+                android:tag="@string/tag_5"
+                android:visibility="gone"
+                tools:text="RE"
+                tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/homeApp8"
-            style="@style/TextLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="@string/app"
-            android:paddingVertical="@dimen/home_app_padding_vertical"
-            android:tag="@string/tag_8"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            <TextView
+                android:id="@+id/homeApp6"
+                style="@style/FocusHomeShortcut"
+                android:hint="@string/app"
+                android:tag="@string/tag_6"
+                android:visibility="gone"
+                tools:text="YO"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/homeApp7"
+                style="@style/FocusHomeShortcut"
+                android:hint="@string/app"
+                android:tag="@string/tag_7"
+                android:visibility="gone"
+                tools:text="NO"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/homeApp8"
+                style="@style/FocusHomeShortcut"
+                android:hint="@string/app"
+                android:tag="@string/tag_8"
+                android:visibility="gone"
+                tools:text="CA"
+                tools:visibility="visible" />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -181,6 +192,8 @@
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginHorizontal="8dp"
         android:layout_marginBottom="56dp"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.08"
         android:text="@string/swipe_up_for_apps" />
 
     <!-- Set default launcher -->

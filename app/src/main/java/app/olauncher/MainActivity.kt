@@ -23,7 +23,6 @@ import androidx.navigation.findNavController
 import app.olauncher.data.Constants
 import app.olauncher.data.Prefs
 import app.olauncher.databinding.ActivityMainBinding
-import app.olauncher.helper.getColorFromAttr
 import app.olauncher.helper.hasBeenDays
 import app.olauncher.helper.hasBeenHours
 import app.olauncher.helper.hasBeenMinutes
@@ -359,8 +358,8 @@ class MainActivity : AppCompatActivity() {
         timerJob?.cancel()
         timerJob = lifecycleScope.launch {
             delay(200)
-            if ((prefs.appTheme == AppCompatDelegate.MODE_NIGHT_YES && getColorFromAttr(R.attr.primaryColor) != getColor(R.color.white))
-                || (prefs.appTheme == AppCompatDelegate.MODE_NIGHT_NO && getColorFromAttr(R.attr.primaryColor) != getColor(R.color.black))
+            if ((prefs.appTheme == AppCompatDelegate.MODE_NIGHT_YES && isDarkThemeOn().not())
+                || (prefs.appTheme == AppCompatDelegate.MODE_NIGHT_NO && isDarkThemeOn())
             )
                 restartLauncherOrCheckTheme(true)
         }

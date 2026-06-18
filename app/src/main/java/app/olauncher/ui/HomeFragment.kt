@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -49,6 +50,7 @@ import app.olauncher.listener.ViewSwipeTouchListener
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener {
 
@@ -58,6 +60,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private val homeShortcutCodes = mutableSetOf<String>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -75,6 +78,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
 
         initObservers()
         setHomeAlignment(prefs.homeAlignment)
+        applyShortcutSizing()
         initSwipeTouchListener()
         initClickListeners()
     }
@@ -240,16 +244,23 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
 
     private fun setHomeAlignment(horizontalGravity: Int = prefs.homeAlignment) {
         val verticalGravity = if (prefs.homeBottomAlignment) Gravity.BOTTOM else Gravity.CENTER_VERTICAL
-        binding.homeAppsLayout.gravity = horizontalGravity or verticalGravity
-        binding.dateTimeLayout.gravity = horizontalGravity
-        binding.homeApp1.gravity = horizontalGravity
-        binding.homeApp2.gravity = horizontalGravity
-        binding.homeApp3.gravity = horizontalGravity
-        binding.homeApp4.gravity = horizontalGravity
-        binding.homeApp5.gravity = horizontalGravity
-        binding.homeApp6.gravity = horizontalGravity
-        binding.homeApp7.gravity = horizontalGravity
-        binding.homeApp8.gravity = horizontalGravity
+        binding.homeAppsLayout.layoutParams = (binding.homeAppsLayout.layoutParams as FrameLayout.LayoutParams).apply {
+            gravity = horizontalGravity or verticalGravity
+            bottomMargin = if (prefs.homeBottomAlignment) 112.dpToPx() else 0
+        }
+        binding.homeAppsLayout.gravity = Gravity.CENTER
+        binding.dateTimeLayout.layoutParams = (binding.dateTimeLayout.layoutParams as FrameLayout.LayoutParams).apply {
+            gravity = horizontalGravity or Gravity.TOP
+        }
+        binding.dateTimeLayout.gravity = Gravity.CENTER_HORIZONTAL
+        binding.homeApp1.gravity = Gravity.CENTER
+        binding.homeApp2.gravity = Gravity.CENTER
+        binding.homeApp3.gravity = Gravity.CENTER
+        binding.homeApp4.gravity = Gravity.CENTER
+        binding.homeApp5.gravity = Gravity.CENTER
+        binding.homeApp6.gravity = Gravity.CENTER
+        binding.homeApp7.gravity = Gravity.CENTER
+        binding.homeApp8.gravity = Gravity.CENTER
     }
 
     private fun populateDateTime() {
@@ -278,11 +289,11 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.tvScreenTime.visibility = View.VISIBLE
 
         val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-        val horizontalMargin = if (isLandscape) 64.dpToPx() else 10.dpToPx()
+        val horizontalMargin = if (isLandscape) 64.dpToPx() else 24.dpToPx()
         val marginTop = if (isLandscape) {
             if (prefs.dateTimeVisibility == Constants.DateTime.DATE_ONLY) 36.dpToPx() else 56.dpToPx()
         } else {
-            if (prefs.dateTimeVisibility == Constants.DateTime.DATE_ONLY) 45.dpToPx() else 72.dpToPx()
+            if (prefs.dateTimeVisibility == Constants.DateTime.DATE_ONLY) 64.dpToPx() else 92.dpToPx()
         }
         val params = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -294,18 +305,20 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             gravity = if (prefs.homeAlignment == Gravity.END) Gravity.START else Gravity.END
         }
         binding.tvScreenTime.layoutParams = params
-        binding.tvScreenTime.setPadding(10.dpToPx())
+        binding.tvScreenTime.setPadding(12.dpToPx(), 8.dpToPx(), 12.dpToPx(), 8.dpToPx())
     }
 
     private fun populateHomeScreen(appCountUpdated: Boolean) {
         if (appCountUpdated) hideHomeApps()
         populateDateTime()
+        applyShortcutSizing()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             populateScreenTime()
 
         val homeAppsNum = prefs.homeAppsNum
         if (homeAppsNum == 0) return
+        homeShortcutCodes.clear()
 
         binding.homeApp1.visibility = View.VISIBLE
         if (!setHomeAppText(binding.homeApp1, prefs.appName1, prefs.appPackage1, prefs.appUser1, prefs.isShortcut1, prefs.shortcutId1)) {
@@ -388,36 +401,93 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
                 val shortcuts = launcherApps.getShortcuts(query, userHandle)
                 // Check if our shortcut still exists
                 if (shortcuts?.any { it.id == shortcutId } == true) {
-                    textView.text = appName
+                    textView.text = appName.toShortcutCode(homeShortcutCodes)
+                    textView.contentDescription = appName
                     return true
                 }
                 textView.text = ""
+                textView.contentDescription = null
                 return false
             } catch (e: Exception) {
                 e.printStackTrace()
                 textView.text = ""
+                textView.contentDescription = null
                 return false
             }
         }
 
         // Regular app check
         if (isPackageInstalled(requireContext(), packageName, userString)) {
-            textView.text = appName
+            textView.text = appName.toShortcutCode(homeShortcutCodes)
+            textView.contentDescription = appName
             return true
         }
         textView.text = ""
+        textView.contentDescription = null
         return false
     }
 
+    private fun String.toShortcutCode(usedCodes: MutableSet<String>): String =
+        trim().let { label ->
+            val words = label
+                .split(Regex("\\s+"))
+                .filter { it.isNotBlank() }
+            val normalized = label
+                .filter { it.isLetterOrDigit() }
+                .uppercase(Locale.getDefault())
+            val candidates = linkedSetOf<String>()
+
+            if (words.size >= 2) {
+                candidates.add(words.take(2).joinToString("") { it.first().uppercaseChar().toString() })
+            }
+            if (normalized.length >= 2) {
+                candidates.add(normalized.take(2))
+                candidates.add("${normalized.first()}${normalized.last()}")
+                normalized.drop(1).forEach { candidates.add("${normalized.first()}$it") }
+            }
+            candidates.add("AP")
+
+            val code = candidates.firstOrNull { it !in usedCodes } ?: "${normalized.firstOrNull() ?: 'A'}${usedCodes.size + 1}"
+            usedCodes.add(code)
+            code.take(2)
+        }
+
     private fun hideHomeApps() {
         binding.homeApp1.visibility = View.GONE
+        binding.homeApp1.contentDescription = null
         binding.homeApp2.visibility = View.GONE
+        binding.homeApp2.contentDescription = null
         binding.homeApp3.visibility = View.GONE
+        binding.homeApp3.contentDescription = null
         binding.homeApp4.visibility = View.GONE
+        binding.homeApp4.contentDescription = null
         binding.homeApp5.visibility = View.GONE
+        binding.homeApp5.contentDescription = null
         binding.homeApp6.visibility = View.GONE
+        binding.homeApp6.contentDescription = null
         binding.homeApp7.visibility = View.GONE
+        binding.homeApp7.contentDescription = null
         binding.homeApp8.visibility = View.GONE
+        binding.homeApp8.contentDescription = null
+    }
+
+    private fun applyShortcutSizing() {
+        val shortcutSize = (56 * prefs.textSizeScale.coerceIn(1f, 1.4f)).roundToInt().dpToPx()
+        listOf(
+            binding.homeApp1,
+            binding.homeApp2,
+            binding.homeApp3,
+            binding.homeApp4,
+            binding.homeApp5,
+            binding.homeApp6,
+            binding.homeApp7,
+            binding.homeApp8
+        ).forEach { shortcut ->
+            shortcut.layoutParams = shortcut.layoutParams.apply {
+                width = shortcutSize
+                height = shortcutSize
+            }
+        }
     }
 
     private fun launchAppOrShortcut(
@@ -561,9 +631,14 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun showStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requireActivity().window.insetsController?.setSystemBarsAppearance(
+                0,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or
+                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+            )
             requireActivity().window.insetsController?.show(WindowInsets.Type.statusBars())
-        else
+        } else
             @Suppress("DEPRECATION", "InlinedApi")
             requireActivity().window.decorView.apply {
                 systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

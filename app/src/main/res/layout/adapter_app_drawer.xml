@@ -11,10 +11,15 @@
         style="@style/TextLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:includeFontPadding="false"
+        android:letterSpacing="0.08"
         android:maxLines="1"
         android:paddingHorizontal="24dp"
-        android:paddingVertical="@dimen/app_padding_vertical"
-        android:text="@string/app" />
+        android:paddingVertical="20dp"
+        android:text="@string/app"
+        android:textAllCaps="true"
+        android:textSize="@dimen/text_small" />
 
     <ImageView
         android:id="@+id/otherProfileIndicator"

@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.bundleOf
@@ -349,12 +350,19 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun showStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val lightMask = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or
+                WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+            requireActivity().window.insetsController?.setSystemBarsAppearance(
+                0,
+                lightMask
+            )
             requireActivity().window.insetsController?.show(WindowInsets.Type.statusBars())
-        else
+        } else
             @Suppress("DEPRECATION", "InlinedApi")
             requireActivity().window.decorView.apply {
-                systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             }
     }
 
