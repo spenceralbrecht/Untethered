@@ -8,6 +8,7 @@
 - The home battery circle must be a real progress ring driven by the current battery percent, not a static decorative circle around the number.
 - The home year-progress graph must use 52 weekly dots and reader-facing copy should say weeks remaining rather than `x of y weeks complete`.
 - Selected home app shortcuts should stay visually clean without decorative rings, but empty home slots must remain visible with a clear placeholder target such as a faint circle plus button.
+- Home app counts from 1 through 8 must render in the same bottom shortcut area with consistent icon sizing; never put overflow shortcuts in a separate top mini row.
 - Home design QA must explicitly check phone screenshots for app shortcut clipping at the screen edges and overlap between shortcuts, the year-progress graph, and the year-progress label.
 
 ## Firebase App Distribution

@@ -30,6 +30,7 @@ import android.view.WindowInsetsController
 import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.bundleOf
@@ -249,13 +250,9 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun setHomeAlignment(horizontalGravity: Int = prefs.homeAlignment) {
-        binding.topAppsLayout.layoutParams = (binding.topAppsLayout.layoutParams as FrameLayout.LayoutParams).apply {
-            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-            topMargin = 24.dpToPx()
-        }
         binding.homeAppsLayout.layoutParams = (binding.homeAppsLayout.layoutParams as FrameLayout.LayoutParams).apply {
             gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-            bottomMargin = 132.dpToPx()
+            bottomMargin = homeAppsBottomMargin()
         }
         binding.homeAppsLayout.gravity = Gravity.CENTER
         binding.dateTimeLayout.layoutParams = (binding.dateTimeLayout.layoutParams as FrameLayout.LayoutParams).apply {
@@ -390,6 +387,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         applyShortcutSizing()
 
         val homeAppsNum = prefs.homeAppsNum
+        configureHomeAppRows(homeAppsNum)
         if (homeAppsNum == 0) return
         homeShortcutCodes.clear()
 
@@ -422,7 +420,6 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         if (homeAppsNum == 4) return
 
         binding.homeApp5.visibility = View.VISIBLE
-        binding.topAppsLayout.visibility = View.VISIBLE
         if (!setHomeAppIcon(binding.homeApp5, prefs.appName5, prefs.appPackage5, prefs.appUser5, prefs.isShortcut5, prefs.shortcutId5)) {
             prefs.appName5 = ""
             prefs.appPackage5 = ""
@@ -549,31 +546,13 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         }
 
     private fun hideHomeApps() {
-        binding.homeApp1.visibility = View.GONE
-        binding.homeApp1.setImageDrawable(null)
-        binding.homeApp1.contentDescription = null
-        binding.homeApp2.visibility = View.GONE
-        binding.homeApp2.setImageDrawable(null)
-        binding.homeApp2.contentDescription = null
-        binding.homeApp3.visibility = View.GONE
-        binding.homeApp3.setImageDrawable(null)
-        binding.homeApp3.contentDescription = null
-        binding.homeApp4.visibility = View.GONE
-        binding.homeApp4.setImageDrawable(null)
-        binding.homeApp4.contentDescription = null
-        binding.homeApp5.visibility = View.GONE
-        binding.homeApp5.setImageDrawable(null)
-        binding.homeApp5.contentDescription = null
-        binding.homeApp6.visibility = View.GONE
-        binding.homeApp6.setImageDrawable(null)
-        binding.homeApp6.contentDescription = null
-        binding.homeApp7.visibility = View.GONE
-        binding.homeApp7.setImageDrawable(null)
-        binding.homeApp7.contentDescription = null
-        binding.homeApp8.visibility = View.GONE
-        binding.homeApp8.setImageDrawable(null)
-        binding.homeApp8.contentDescription = null
-        binding.topAppsLayout.visibility = View.GONE
+        homeAppViews().forEach { shortcut ->
+            shortcut.visibility = View.GONE
+            shortcut.setImageDrawable(null)
+            shortcut.contentDescription = null
+        }
+        binding.homeAppsRow1.visibility = View.GONE
+        binding.homeAppsRow2.visibility = View.GONE
     }
 
     private fun String.toCodeDrawable(): Drawable {
@@ -608,33 +587,62 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
 
     private fun applyShortcutSizing() {
         val shortcutSize = (72 * prefs.textSizeScale.coerceIn(1f, 1.18f)).roundToInt().dpToPx()
+        val horizontalMargin = 8.dpToPx()
+        homeAppViews().forEach { shortcut ->
+            shortcut.layoutParams = (shortcut.layoutParams as? LinearLayout.LayoutParams ?: LinearLayout.LayoutParams(
+                shortcutSize,
+                shortcutSize
+            )).apply {
+                width = shortcutSize
+                height = shortcutSize
+                marginStart = horizontalMargin
+                marginEnd = horizontalMargin
+            }
+            shortcut.setPadding(14.dpToPx())
+        }
+    }
+
+    private fun homeAppViews(): List<ImageView> =
         listOf(
             binding.homeApp1,
             binding.homeApp2,
             binding.homeApp3,
-            binding.homeApp4
-        ).forEach { shortcut ->
-            shortcut.layoutParams = shortcut.layoutParams.apply {
-                width = shortcutSize
-                height = shortcutSize
-            }
-            shortcut.setPadding(14.dpToPx())
-        }
-
-        val miniShortcutSize = (34 * prefs.textSizeScale.coerceIn(1f, 1.12f)).roundToInt().dpToPx()
-        listOf(
+            binding.homeApp4,
             binding.homeApp5,
             binding.homeApp6,
             binding.homeApp7,
             binding.homeApp8
-        ).forEach { shortcut ->
-            shortcut.layoutParams = shortcut.layoutParams.apply {
-                width = miniShortcutSize
-                height = miniShortcutSize
+        )
+
+    private fun configureHomeAppRows(appCount: Int) {
+        val visibleCount = appCount.coerceIn(0, 8)
+        val firstRowCount = when {
+            visibleCount <= 4 -> visibleCount
+            visibleCount <= 6 -> 3
+            else -> 4
+        }
+
+        binding.homeAppsRow1.removeAllViews()
+        binding.homeAppsRow2.removeAllViews()
+
+        homeAppViews().forEachIndexed { index, shortcut ->
+            shortcut.visibility = if (index < visibleCount) View.VISIBLE else View.GONE
+            if (index < visibleCount) {
+                val targetRow = if (index < firstRowCount) binding.homeAppsRow1 else binding.homeAppsRow2
+                targetRow.addView(shortcut)
             }
-            shortcut.setPadding(7.dpToPx())
+        }
+
+        binding.homeAppsRow1.isVisible = firstRowCount > 0
+        binding.homeAppsRow2.isVisible = visibleCount > firstRowCount
+        (binding.homeAppsLayout.layoutParams as FrameLayout.LayoutParams).apply {
+            bottomMargin = homeAppsBottomMargin()
+            binding.homeAppsLayout.layoutParams = this
         }
     }
+
+    private fun homeAppsBottomMargin(): Int =
+        if (prefs.homeAppsNum > 4) 104.dpToPx() else 132.dpToPx()
 
     private fun launchAppOrShortcut(
         appName: String,
