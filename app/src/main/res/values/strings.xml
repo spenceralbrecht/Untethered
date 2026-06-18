@@ -22,8 +22,17 @@
     <string name="time_spent_hour" translatable="false">%1$sh %2$sm</string>
     <string name="year_progress_weeks">%1$d of %2$d weeks complete</string>
     <string name="year_progress_description">%1$d of %2$d weeks shown for this year</string>
+    <string name="uv_index" translatable="false">UV index</string>
     <string name="disconnect" translatable="false">Disconnect</string>
     <string name="disconnect_status_ready" translatable="false">Ready to disconnect</string>
+    <string name="blocking_tools" translatable="false">Disconnect controls</string>
+    <string name="blocking_dashboard" translatable="false">Dashboard</string>
+    <string name="blocked_apps" translatable="false">Blocked apps</string>
+    <string name="blocked_websites" translatable="false">Blocked websites</string>
+    <string name="home_rules" translatable="false">Home rules</string>
+    <string name="hard_mode" translatable="false">Hard mode</string>
+    <string name="qr_unlock" translatable="false">QR unlock</string>
+    <string name="nfc_unlock" translatable="false">NFC unlock tag</string>
     <string name="title_activity_app_selection" translatable="false">Blocked Apps</string>
     <string name="title_activity_website_rules" translatable="false">Blocked Websites</string>
     <string name="title_activity_home_rules" translatable="false">Home Rules</string>

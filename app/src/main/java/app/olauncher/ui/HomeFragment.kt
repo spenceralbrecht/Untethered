@@ -28,7 +28,6 @@ import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -36,6 +35,7 @@ import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.olauncher.MainViewModel
 import app.olauncher.R
@@ -43,7 +43,6 @@ import app.olauncher.data.AppModel
 import app.olauncher.data.Constants
 import app.olauncher.data.Prefs
 import app.olauncher.databinding.FragmentHomeBinding
-import app.olauncher.helper.appUsagePermissionGranted
 import app.olauncher.helper.dpToPx
 import app.olauncher.helper.expandNotificationDrawer
 import app.olauncher.helper.getChangedAppTheme
@@ -56,8 +55,10 @@ import app.olauncher.helper.openDialerApp
 import app.olauncher.helper.openSearch
 import app.olauncher.helper.setPlainWallpaperByTheme
 import app.olauncher.helper.showToast
+import app.olauncher.helper.UvIndexManager
 import app.olauncher.listener.OnSwipeTouchListener
 import app.olauncher.listener.ViewSwipeTouchListener
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -114,7 +115,6 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             R.id.clock -> openClockApp()
             R.id.date -> openCalendarApp()
             R.id.setDefaultLauncher -> viewModel.resetLauncherLiveData.call()
-            R.id.tvScreenTime -> openScreenTimeDigitalWellbeing()
 
             else -> {
                 try { // Launch app
@@ -175,13 +175,6 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
                 prefs.calendarAppUser = ""
             }
 
-            R.id.tvScreenTime -> {
-                showAppList(Constants.FLAG_SET_SCREEN_TIME_APP)
-                prefs.screenTimeAppPackage = ""
-                prefs.screenTimeAppClassName = ""
-                prefs.screenTimeAppUser = ""
-            }
-
             R.id.setDefaultLauncher -> {
                 prefs.hideSetDefaultLauncher = true
                 binding.setDefaultLauncher.visibility = View.GONE
@@ -221,9 +214,6 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         viewModel.toggleDateTime.observe(viewLifecycleOwner) {
             populateDateTime()
         }
-        viewModel.screenTimeValue.observe(viewLifecycleOwner) {
-            it?.let { binding.tvScreenTime.text = it }
-        }
         // Home button for recents feature disabled
         // viewModel.showRecentApps.observe(viewLifecycleOwner) {
         //     binding.recents.performClick()
@@ -253,19 +243,16 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.date.setOnLongClickListener(this)
         binding.setDefaultLauncher.setOnClickListener(this)
         binding.setDefaultLauncher.setOnLongClickListener(this)
-        binding.tvScreenTime.setOnClickListener(this)
-        binding.tvScreenTime.setOnLongClickListener(this)
     }
 
     private fun setHomeAlignment(horizontalGravity: Int = prefs.homeAlignment) {
-        val verticalGravity = if (prefs.homeBottomAlignment) Gravity.BOTTOM else Gravity.CENTER_VERTICAL
         binding.topAppsLayout.layoutParams = (binding.topAppsLayout.layoutParams as FrameLayout.LayoutParams).apply {
             gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
             topMargin = 24.dpToPx()
         }
         binding.homeAppsLayout.layoutParams = (binding.homeAppsLayout.layoutParams as FrameLayout.LayoutParams).apply {
             gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-            bottomMargin = 250.dpToPx()
+            bottomMargin = 132.dpToPx()
         }
         binding.homeAppsLayout.gravity = Gravity.CENTER
         binding.dateTimeLayout.layoutParams = (binding.dateTimeLayout.layoutParams as FrameLayout.LayoutParams).apply {
@@ -284,6 +271,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.dayOfMonth.text = calendar.get(Calendar.DAY_OF_MONTH).toString()
         binding.date.text = dateText.replace(".,", ",")
         populateYearProgress()
+        populateUvIndex()
     }
 
     private fun populateYearProgress() {
@@ -320,21 +308,20 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             setColor(if (isElapsed) Color.WHITE else Color.argb(45, 255, 255, 255))
         }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun populateScreenTime() {
-        if (requireContext().appUsagePermissionGranted().not()) return
-
-        viewModel.getTodaysScreenTime()
-        binding.tvScreenTime.visibility = View.VISIBLE
+    private fun populateUvIndex() {
+        binding.tvScreenTime.text = "--"
+        viewLifecycleOwner.lifecycleScope.launch {
+            val uvIndex = UvIndexManager.currentUvIndex(requireContext())
+            if (_binding != null) {
+                binding.tvScreenTime.text = uvIndex?.roundToInt()?.toString() ?: "--"
+            }
+        }
     }
 
     private fun populateHomeScreen(appCountUpdated: Boolean) {
         if (appCountUpdated) hideHomeApps()
         populateDateTime()
         applyShortcutSizing()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            populateScreenTime()
 
         val homeAppsNum = prefs.homeAppsNum
         if (homeAppsNum == 0) return

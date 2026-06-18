@@ -108,7 +108,8 @@
                 android:layout_marginStart="12dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
-                android:text="0"
+                android:contentDescription="@string/uv_index"
+                android:text="--"
                 android:textSize="16sp"
                 tools:text="7" />
         </LinearLayout>
@@ -190,14 +191,15 @@
 
     <LinearLayout
         android:id="@+id/homeAppsLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="250dp"
+        android:layout_marginBottom="132dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/homeApp1"
