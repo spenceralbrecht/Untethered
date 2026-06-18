@@ -82,8 +82,8 @@
                 android:fontFamily="monospace"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:textSize="15sp"
-                tools:text="31" />
+                android:textSize="12sp"
+                tools:text="31%" />
 
             <View
                 android:layout_width="1dp"
@@ -131,7 +131,7 @@
                 android:id="@+id/yearProgressGraph"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:columnCount="53"
+                android:columnCount="52"
                 android:rowCount="1" />
 
             <TextView
@@ -145,7 +145,7 @@
                 android:letterSpacing="0.16"
                 android:textColor="@color/blackInverseTrans50"
                 android:textSize="9sp"
-                tools:text="25 of 53 weeks complete" />
+                tools:text="27 weeks remaining" />
         </LinearLayout>
     </LinearLayout>
 

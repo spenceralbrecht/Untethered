@@ -20,8 +20,8 @@
     <string name="tag_8" translatable="false">8</string>
     <string name="time_spent_min" translatable="false"><b>%1$sm</b></string>
     <string name="time_spent_hour" translatable="false">%1$sh %2$sm</string>
-    <string name="year_progress_weeks">%1$d of %2$d weeks complete</string>
-    <string name="year_progress_description">%1$d of %2$d weeks shown for this year</string>
+    <string name="year_progress_weeks_remaining">%1$d weeks remaining</string>
+    <string name="year_progress_description">%1$d weeks complete, %2$d weeks remaining</string>
     <string name="battery_percent" translatable="false">Battery percent</string>
     <string name="uv_index" translatable="false">UV index</string>
     <string name="disconnect" translatable="false">Disconnect</string>

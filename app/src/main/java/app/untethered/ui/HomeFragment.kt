@@ -10,7 +10,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.graphics.ColorFilter
 import android.graphics.Paint
+import android.graphics.PixelFormat
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -267,24 +270,26 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.date.isVisible = Constants.DateTime.isDateVisible(prefs.dateTimeVisibility)
 
         val dateText = SimpleDateFormat("EEEE, MMMM d", Locale.getDefault()).format(Date())
-        binding.batteryPercent.text = currentBatteryPercent()
+        val batteryPercent = currentBatteryPercent()
+        binding.batteryPercent.text = batteryPercent?.let { "$it%" } ?: "--"
+        binding.batteryPercent.background = batteryRingDrawable(batteryPercent)
         binding.date.text = dateText.replace(".,", ",")
         populateYearProgress()
         populateUvIndex()
     }
 
-    private fun currentBatteryPercent(): String {
+    private fun currentBatteryPercent(): Int? {
         val batteryManager = requireContext().getSystemService(Context.BATTERY_SERVICE) as BatteryManager
         val percent = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-        return if (percent >= 0) percent.toString() else "--"
+        return percent.takeIf { it in 0..100 }
     }
 
     private fun populateYearProgress() {
         val calendar = Calendar.getInstance()
         val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
-        val daysInYear = calendar.getActualMaximum(Calendar.DAY_OF_YEAR)
-        val totalWeeks = (daysInYear + 6) / 7
+        val totalWeeks = 52
         val elapsedWeeks = ((dayOfYear + 6) / 7).coerceIn(0, totalWeeks)
+        val remainingWeeks = (totalWeeks - elapsedWeeks).coerceAtLeast(0)
 
         binding.yearProgressGraph.removeAllViews()
         binding.yearProgressGraph.columnCount = totalWeeks
@@ -302,9 +307,65 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
                 }
             )
         }
-        binding.yearProgressLabel.text = getString(R.string.year_progress_weeks, elapsedWeeks, totalWeeks)
+        binding.yearProgressLabel.text = getString(R.string.year_progress_weeks_remaining, remainingWeeks)
         binding.yearProgressLayout.contentDescription =
-            getString(R.string.year_progress_description, elapsedWeeks, totalWeeks)
+            getString(R.string.year_progress_description, elapsedWeeks, remainingWeeks)
+    }
+
+    private fun batteryRingDrawable(percent: Int?): Drawable {
+        val progress = percent?.coerceIn(0, 100) ?: 0
+        val strokeWidth = 2.dpToPx().toFloat()
+        return object : Drawable() {
+            private val boundsRect = RectF()
+            private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.BLACK
+                style = Paint.Style.FILL
+            }
+            private val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.argb(70, 255, 255, 255)
+                style = Paint.Style.STROKE
+                strokeCap = Paint.Cap.ROUND
+                this.strokeWidth = strokeWidth
+            }
+            private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.argb(225, 255, 255, 255)
+                style = Paint.Style.STROKE
+                strokeCap = Paint.Cap.ROUND
+                this.strokeWidth = strokeWidth
+            }
+
+            override fun draw(canvas: Canvas) {
+                val inset = strokeWidth / 2f
+                boundsRect.set(
+                    bounds.left + inset,
+                    bounds.top + inset,
+                    bounds.right - inset,
+                    bounds.bottom - inset
+                )
+                canvas.drawOval(boundsRect, fillPaint)
+                canvas.drawOval(boundsRect, trackPaint)
+                if (progress > 0) {
+                    canvas.drawArc(boundsRect, -90f, progress * 3.6f, false, progressPaint)
+                }
+            }
+
+            override fun setAlpha(alpha: Int) {
+                fillPaint.alpha = alpha
+                trackPaint.alpha = (70 * alpha / 255f).roundToInt()
+                progressPaint.alpha = (225 * alpha / 255f).roundToInt()
+                invalidateSelf()
+            }
+
+            override fun setColorFilter(colorFilter: ColorFilter?) {
+                fillPaint.colorFilter = colorFilter
+                trackPaint.colorFilter = colorFilter
+                progressPaint.colorFilter = colorFilter
+                invalidateSelf()
+            }
+
+            @Deprecated("Deprecated in Java")
+            override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
+        }
     }
 
     private fun weekCellBackground(isElapsed: Boolean): Drawable =

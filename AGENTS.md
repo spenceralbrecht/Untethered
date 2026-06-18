@@ -5,6 +5,8 @@
 - Home blocker functionality must appear as first-class settings rows on the launcher settings screen; do not hide core blocker controls behind a single dashboard entry.
 - The home UV stat should use free Open-Meteo UV data, matching the Vitamin-D-Tracker pattern: current or saved location coordinates with `current=uv_index` and `timezone=auto`.
 - The home UV stat must not remain stuck at `--` just because Android location permission is missing; use saved Home Rules coordinates or a no-permission network/IP coordinate fallback before giving up.
+- The home battery circle must be a real progress ring driven by the current battery percent, not a static decorative circle around the number.
+- The home year-progress graph must use 52 weekly dots and reader-facing copy should say weeks remaining rather than `x of y weeks complete`.
 - Selected home app shortcuts should stay visually clean without decorative rings, but empty home slots must remain visible with a clear placeholder target such as a faint circle plus button.
 - Home design QA must explicitly check phone screenshots for app shortcut clipping at the screen edges and overlap between shortcuts, the year-progress graph, and the year-progress label.
 
