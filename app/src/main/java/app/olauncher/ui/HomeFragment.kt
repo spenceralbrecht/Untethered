@@ -195,10 +195,10 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun initObservers() {
+        binding.firstRunTips.visibility = View.GONE
         if (prefs.firstSettingsOpen) {
-            binding.firstRunTips.visibility = View.VISIBLE
             binding.setDefaultLauncher.visibility = View.GONE
-        } else binding.firstRunTips.visibility = View.GONE
+        }
 
         viewModel.refreshHome.observe(viewLifecycleOwner) {
             populateHomeScreen(it)
@@ -259,13 +259,17 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
 
     private fun setHomeAlignment(horizontalGravity: Int = prefs.homeAlignment) {
         val verticalGravity = if (prefs.homeBottomAlignment) Gravity.BOTTOM else Gravity.CENTER_VERTICAL
+        binding.topAppsLayout.layoutParams = (binding.topAppsLayout.layoutParams as FrameLayout.LayoutParams).apply {
+            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+            topMargin = 24.dpToPx()
+        }
         binding.homeAppsLayout.layoutParams = (binding.homeAppsLayout.layoutParams as FrameLayout.LayoutParams).apply {
-            gravity = horizontalGravity or verticalGravity
-            bottomMargin = if (prefs.homeBottomAlignment) 112.dpToPx() else 0
+            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            bottomMargin = 250.dpToPx()
         }
         binding.homeAppsLayout.gravity = Gravity.CENTER
         binding.dateTimeLayout.layoutParams = (binding.dateTimeLayout.layoutParams as FrameLayout.LayoutParams).apply {
-            gravity = horizontalGravity or Gravity.TOP
+            gravity = Gravity.CENTER
         }
         binding.dateTimeLayout.gravity = Gravity.CENTER_HORIZONTAL
     }
@@ -275,16 +279,9 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.clock.isVisible = Constants.DateTime.isTimeVisible(prefs.dateTimeVisibility)
         binding.date.isVisible = Constants.DateTime.isDateVisible(prefs.dateTimeVisibility)
 
-//        var dateText = SimpleDateFormat("EEE, d MMM", Locale.getDefault()).format(Date())
-        val dateFormat = SimpleDateFormat("EEE, d MMM", Locale.getDefault())
-        var dateText = dateFormat.format(Date())
-
-        if (!prefs.showStatusBar) {
-            val battery = (requireContext().getSystemService(Context.BATTERY_SERVICE) as BatteryManager)
-                .getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            if (battery > 0)
-                dateText = getString(R.string.day_battery, dateText, battery)
-        }
+        val calendar = Calendar.getInstance()
+        val dateText = SimpleDateFormat("EEEE, MMMM d", Locale.getDefault()).format(Date())
+        binding.dayOfMonth.text = calendar.get(Calendar.DAY_OF_MONTH).toString()
         binding.date.text = dateText.replace(".,", ",")
         populateYearProgress()
     }
@@ -297,16 +294,17 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         val elapsedWeeks = ((dayOfYear + 6) / 7).coerceIn(0, totalWeeks)
 
         binding.yearProgressGraph.removeAllViews()
-        binding.yearProgressGraph.columnCount = 18
+        binding.yearProgressGraph.columnCount = totalWeeks
+        binding.yearProgressGraph.rowCount = 1
 
         repeat(totalWeeks) { index ->
             binding.yearProgressGraph.addView(
                 View(requireContext()).apply {
                     background = weekCellBackground(index < elapsedWeeks)
                     layoutParams = GridLayout.LayoutParams().apply {
-                        width = 5.dpToPx()
-                        height = 5.dpToPx()
-                        setMargins(1.dpToPx(), 1.dpToPx(), 1.dpToPx(), 1.dpToPx())
+                        width = 4.dpToPx()
+                        height = 4.dpToPx()
+                        setMargins(1.dpToPx(), 0, 1.dpToPx(), 0)
                     }
                 }
             )
@@ -318,8 +316,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
 
     private fun weekCellBackground(isElapsed: Boolean): Drawable =
         GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadius = 2.dpToPx().toFloat()
+            shape = GradientDrawable.OVAL
             setColor(if (isElapsed) Color.WHITE else Color.argb(45, 255, 255, 255))
         }
 
@@ -329,25 +326,6 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
 
         viewModel.getTodaysScreenTime()
         binding.tvScreenTime.visibility = View.VISIBLE
-
-        val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-        val horizontalMargin = if (isLandscape) 64.dpToPx() else 24.dpToPx()
-        val marginTop = if (isLandscape) {
-            if (prefs.dateTimeVisibility == Constants.DateTime.DATE_ONLY) 36.dpToPx() else 56.dpToPx()
-        } else {
-            if (prefs.dateTimeVisibility == Constants.DateTime.DATE_ONLY) 64.dpToPx() else 92.dpToPx()
-        }
-        val params = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.WRAP_CONTENT,
-            FrameLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-            topMargin = marginTop
-            marginStart = horizontalMargin
-            marginEnd = horizontalMargin
-            gravity = if (prefs.homeAlignment == Gravity.END) Gravity.START else Gravity.END
-        }
-        binding.tvScreenTime.layoutParams = params
-        binding.tvScreenTime.setPadding(12.dpToPx(), 8.dpToPx(), 12.dpToPx(), 8.dpToPx())
     }
 
     private fun populateHomeScreen(appCountUpdated: Boolean) {
@@ -391,6 +369,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         if (homeAppsNum == 4) return
 
         binding.homeApp5.visibility = View.VISIBLE
+        binding.topAppsLayout.visibility = View.VISIBLE
         if (!setHomeAppIcon(binding.homeApp5, prefs.appName5, prefs.appPackage5, prefs.appUser5, prefs.isShortcut5, prefs.shortcutId5)) {
             prefs.appName5 = ""
             prefs.appPackage5 = ""
@@ -537,6 +516,7 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         binding.homeApp8.visibility = View.GONE
         binding.homeApp8.setImageDrawable(null)
         binding.homeApp8.contentDescription = null
+        binding.topAppsLayout.visibility = View.GONE
     }
 
     private fun String.toCodeDrawable(): Drawable {
@@ -555,21 +535,32 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     }
 
     private fun applyShortcutSizing() {
-        val shortcutSize = (56 * prefs.textSizeScale.coerceIn(1f, 1.4f)).roundToInt().dpToPx()
+        val shortcutSize = (72 * prefs.textSizeScale.coerceIn(1f, 1.18f)).roundToInt().dpToPx()
         listOf(
             binding.homeApp1,
             binding.homeApp2,
             binding.homeApp3,
-            binding.homeApp4,
+            binding.homeApp4
+        ).forEach { shortcut ->
+            shortcut.layoutParams = shortcut.layoutParams.apply {
+                width = shortcutSize
+                height = shortcutSize
+            }
+            shortcut.setPadding(14.dpToPx())
+        }
+
+        val miniShortcutSize = (34 * prefs.textSizeScale.coerceIn(1f, 1.12f)).roundToInt().dpToPx()
+        listOf(
             binding.homeApp5,
             binding.homeApp6,
             binding.homeApp7,
             binding.homeApp8
         ).forEach { shortcut ->
             shortcut.layoutParams = shortcut.layoutParams.apply {
-                width = shortcutSize
-                height = shortcutSize
+                width = miniShortcutSize
+                height = miniShortcutSize
             }
+            shortcut.setPadding(7.dpToPx())
         }
     }
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/blackTrans90"
+    android:background="@android:color/black"
     android:orientation="vertical"
     tools:context=".ui.HomeFragment">
 
@@ -29,9 +29,8 @@
         android:id="@+id/dateTimeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
+        android:layout_gravity="center"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"
         android:layout_marginEnd="24dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
@@ -47,7 +46,7 @@
             android:format12Hour="hh:mm"
             android:format24Hour="HH:mm"
             android:includeFontPadding="false"
-            android:letterSpacing="0.08"
+            android:letterSpacing="0.04"
             android:textSize="@dimen/time_size"
             tools:text="02:34" />
 
@@ -56,25 +55,69 @@
             style="@style/TextDefault"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
-            android:background="@drawable/focus_pill_outline"
+            android:layout_marginTop="20dp"
             android:format12Hour="EEE, dd MMM"
             android:format24Hour="EEE, dd MMM"
             android:fontFamily="monospace"
             android:includeFontPadding="false"
-            android:letterSpacing="0.12"
-            android:paddingStart="20dp"
-            android:paddingEnd="22dp"
-            android:paddingVertical="10dp"
-            android:textAllCaps="true"
+            android:letterSpacing="0.16"
             android:textSize="@dimen/date_size"
-            tools:text="Thu, 30 Dec" />
+            tools:text="Thursday, June 18" />
+
+        <LinearLayout
+            android:id="@+id/focusStatsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="34dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dayOfMonth"
+                style="@style/TextSmall"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/focus_home_shortcut"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:textSize="15sp"
+                tools:text="31" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="34dp"
+                android:layout_marginEnd="34dp"
+                android:background="@color/blackInverseTrans25" />
+
+            <TextView
+                style="@style/TextSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:includeFontPadding="false"
+                android:text="☼"
+                android:textSize="29sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvScreenTime"
+                style="@style/TextSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:fontFamily="monospace"
+                android:includeFontPadding="false"
+                android:text="0"
+                android:textSize="16sp"
+                tools:text="7" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/yearProgressLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="42dp"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -82,8 +125,8 @@
                 android:id="@+id/yearProgressGraph"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:columnCount="18"
-                android:rowCount="3" />
+                android:columnCount="53"
+                android:rowCount="1" />
 
             <TextView
                 android:id="@+id/yearProgressLabel"
@@ -94,119 +137,99 @@
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:letterSpacing="0.16"
-                android:textAllCaps="true"
                 android:textColor="@color/blackInverseTrans50"
                 android:textSize="9sp"
-                tools:text="25/53 WEEKS" />
+                tools:text="25 of 53 weeks complete" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Screen time-->
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tvScreenTime"
-        style="@style/TextSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="92dp"
-        android:background="@drawable/focus_pill_outline"
-        android:gravity="center"
-        android:fontFamily="monospace"
-        android:letterSpacing="0.08"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="8dp"
-        android:textSize="@dimen/date_size"
-        android:visibility="gone"
-        tools:text="2h 11m"
-        tools:visibility="visible" />
-
     <!-- Home apps-->
+    <LinearLayout
+        android:id="@+id/topAppsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeApp5"
+            style="@style/FocusHomeShortcutMini"
+            android:tag="@string/tag_5"
+            android:visibility="gone"
+            tools:src="@mipmap/ic_launcher"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeApp6"
+            style="@style/FocusHomeShortcutMini"
+            android:tag="@string/tag_6"
+            android:visibility="gone"
+            tools:src="@mipmap/ic_launcher"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeApp7"
+            style="@style/FocusHomeShortcutMini"
+            android:tag="@string/tag_7"
+            android:visibility="gone"
+            tools:src="@mipmap/ic_launcher"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeApp8"
+            style="@style/FocusHomeShortcutMini"
+            android:tag="@string/tag_8"
+            android:visibility="gone"
+            tools:src="@mipmap/ic_launcher"
+            tools:visibility="visible" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/homeAppsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="bottom|center_horizontal"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginBottom="250dp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <LinearLayout
-            style="@style/FocusHomeShortcutRow">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeApp1"
+            style="@style/FocusHomeShortcut"
+            android:tag="@string/tag_1"
+            android:visibility="gone"
+            tools:src="@mipmap/ic_launcher"
+            tools:visibility="visible" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/homeApp1"
-                style="@style/FocusHomeShortcut"
-                android:tag="@string/tag_1"
-                android:visibility="gone"
-                tools:src="@mipmap/ic_launcher"
-                tools:visibility="visible" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeApp2"
+            style="@style/FocusHomeShortcut"
+            android:tag="@string/tag_2"
+            android:visibility="gone"
+            tools:src="@mipmap/ic_launcher"
+            tools:visibility="visible" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/homeApp2"
-                style="@style/FocusHomeShortcut"
-                android:tag="@string/tag_2"
-                android:visibility="gone"
-                tools:src="@mipmap/ic_launcher"
-                tools:visibility="visible" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeApp3"
+            style="@style/FocusHomeShortcut"
+            android:tag="@string/tag_3"
+            android:visibility="gone"
+            tools:src="@mipmap/ic_launcher"
+            tools:visibility="visible" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/homeApp3"
-                style="@style/FocusHomeShortcut"
-                android:tag="@string/tag_3"
-                android:visibility="gone"
-                tools:src="@mipmap/ic_launcher"
-                tools:visibility="visible" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/FocusHomeShortcutRow">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/homeApp4"
-                style="@style/FocusHomeShortcut"
-                android:tag="@string/tag_4"
-                android:visibility="gone"
-                tools:src="@mipmap/ic_launcher"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/homeApp5"
-                style="@style/FocusHomeShortcut"
-                android:tag="@string/tag_5"
-                android:visibility="gone"
-                tools:src="@mipmap/ic_launcher"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/homeApp6"
-                style="@style/FocusHomeShortcut"
-                android:tag="@string/tag_6"
-                android:visibility="gone"
-                tools:src="@mipmap/ic_launcher"
-                tools:visibility="visible" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/FocusHomeShortcutRow">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/homeApp7"
-                style="@style/FocusHomeShortcut"
-                android:tag="@string/tag_7"
-                android:visibility="gone"
-                tools:src="@mipmap/ic_launcher"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/homeApp8"
-                style="@style/FocusHomeShortcut"
-                android:tag="@string/tag_8"
-                android:visibility="gone"
-                tools:src="@mipmap/ic_launcher"
-                tools:visibility="visible" />
-        </LinearLayout>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeApp4"
+            style="@style/FocusHomeShortcut"
+            android:tag="@string/tag_4"
+            android:visibility="gone"
+            tools:src="@mipmap/ic_launcher"
+            tools:visibility="visible" />
 
     </LinearLayout>
 

@@ -20,8 +20,22 @@
     <string name="tag_8" translatable="false">8</string>
     <string name="time_spent_min" translatable="false"><b>%1$sm</b></string>
     <string name="time_spent_hour" translatable="false">%1$sh %2$sm</string>
-    <string name="year_progress_weeks">%1$d/%2$d weeks</string>
+    <string name="year_progress_weeks">%1$d of %2$d weeks complete</string>
     <string name="year_progress_description">%1$d of %2$d weeks shown for this year</string>
+    <string name="disconnect" translatable="false">Disconnect</string>
+    <string name="disconnect_status_ready" translatable="false">Ready to disconnect</string>
+    <string name="title_activity_app_selection" translatable="false">Blocked Apps</string>
+    <string name="title_activity_website_rules" translatable="false">Blocked Websites</string>
+    <string name="title_activity_home_rules" translatable="false">Home Rules</string>
+    <string name="title_activity_hard_mode" translatable="false">Hard Mode</string>
+    <string name="title_activity_blocking" translatable="false">Blocked</string>
+    <string name="title_activity_qr_code" translatable="false">QR Unlock</string>
+    <string name="title_activity_shortcut_handler" translatable="false">Start Disconnect</string>
+    <string name="shortcut_start_session_short_label" translatable="false">Disconnect</string>
+    <string name="shortcut_start_session_long_label" translatable="false">Start Silo disconnect</string>
+    <string name="shortcut_start_session_disabled" translatable="false">Disconnect shortcut disabled</string>
+    <string name="blocker_accessibility_service_description" translatable="false">Silo uses accessibility only to detect and close selected blocked app windows during disconnect sessions. Data stays on this device.</string>
+    <string name="device_admin_description" translatable="false">Silo hard mode can use device admin to resist uninstalling or bypassing selected blocks during disconnect sessions.</string>
 
     <string name="x_twitter" translatable="false">X/Twitter</string>
     <string name="instagram" translatable="false">Instagram</string>

@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 android {
     compileSdk 35
@@ -17,8 +19,8 @@ android {
         applicationId "app.olauncher"
         minSdkVersion 24
         targetSdkVersion 35
-        versionCode 109
-        versionName "v6.6.18-silo"
+        versionCode 110
+        versionName "v6.6.19-silo"
 
         resourceConfigurations += ["en", "ar", "de", "es-rES", "es-rUS", "fr", "he", "hr", "hu", "in", "it", "ja", "nl", "pl", "pt-rBR", "ru-rRU", "sv", "tr", "uk", "zh"]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -40,6 +42,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
     namespace 'app.olauncher'
 }
@@ -49,10 +52,13 @@ dependencies {
     implementation libs.kotlin.stdlib
     implementation libs.core.ktx
     implementation libs.appcompat
+    implementation libs.activity
+    implementation libs.activity.compose
     implementation libs.recyclerview
 
     // Android lifecycle
     implementation libs.lifecycle.extensions
+    implementation libs.lifecycle.runtime.compose
     implementation libs.lifecycle.viewmodel.ktx
 
     // Navigation
@@ -63,5 +69,19 @@ dependencies {
 
     //Material dependency
     implementation libs.material
+    implementation platform(libs.compose.bom)
+    implementation libs.compose.ui
+    implementation libs.compose.ui.graphics
+    implementation libs.compose.ui.tooling.preview
+    implementation libs.compose.material3
+    implementation libs.compose.material.icons.extended
+    implementation libs.coil.compose
+    implementation libs.room.runtime
+    implementation libs.room.ktx
+    kapt libs.room.compiler
+    implementation libs.zxing.core
+    implementation libs.zxing.android.embedded
+    implementation libs.play.services.location
+    debugImplementation libs.compose.ui.tooling
 
 }

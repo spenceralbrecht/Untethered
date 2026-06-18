@@ -115,6 +115,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         when (view.id) {
             R.id.olauncherHiddenApps -> showHiddenApps()
             R.id.moreFeatures -> viewModel.showDialog.postValue(Constants.Dialog.PRO_MESSAGE)
+            R.id.disconnect -> startActivity(Intent(requireContext(), com.cj.tapblok.MainActivity::class.java))
             R.id.screenTimeOnOff -> viewModel.showDialog.postValue(Constants.Dialog.DIGITAL_WELLBEING)
             R.id.appInfo -> openAppInfo(requireContext(), Process.myUserHandle(), BuildConfig.APPLICATION_ID)
             R.id.setLauncher -> viewModel.resetLauncherLiveData.call()
@@ -217,6 +218,7 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
         binding.setLauncher.setOnClickListener(this)
         binding.aboutOlauncher.setOnClickListener(this)
         binding.moreFeatures.setOnClickListener(this)
+        binding.disconnect?.setOnClickListener(this)
         binding.autoShowKeyboard.setOnClickListener(this)
         binding.toggleLock.setOnClickListener(this)
         // Home button for recents feature disabled
@@ -279,7 +281,6 @@ class SettingsFragment : Fragment(), View.OnClickListener, View.OnLongClickListe
 
     private fun initObservers() {
         if (prefs.firstSettingsOpen) {
-            viewModel.showDialog.postValue(Constants.Dialog.ABOUT)
             prefs.firstSettingsOpen = false
         }
         viewModel.isOlauncherDefault.observe(viewLifecycleOwner) {

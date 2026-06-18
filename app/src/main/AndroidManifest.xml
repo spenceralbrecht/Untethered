@@ -4,10 +4,23 @@
 
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+    <permission
+        android:name="app.olauncher.permission.START_MONITORING"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.NFC" />
     <!--Used only for downloading wallpapers-->
     <uses-permission android:name="android.permission.INTERNET" />
     <!--Used only for opening alarm app-->
@@ -17,8 +30,12 @@
         tools:ignore="ProtectedPermissions" />
     <!--Used for Private Space support on Android 15+-->
     <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false" />
 
     <application
+        android:name="com.cj.tapblok.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -28,6 +45,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="false"
         tools:ignore="UnusedAttribute">
 
         <activity
@@ -102,6 +120,135 @@
             </intent-filter>
         </service>
 
+        <activity
+            android:name="com.cj.tapblok.MainActivity"
+            android:exported="false"
+            android:label="@string/disconnect"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.cj.tapblok.AppSelectionActivity"
+            android:exported="false"
+            android:label="@string/title_activity_app_selection"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.cj.tapblok.WebsiteRulesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_website_rules"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.cj.tapblok.HomeRulesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_home_rules"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.cj.tapblok.HardModeActivity"
+            android:exported="false"
+            android:label="@string/title_activity_hard_mode"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.cj.tapblok.BlockingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_blocking"
+            android:launchMode="singleInstance"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.cj.tapblok.QrCodeActivity"
+            android:exported="false"
+            android:label="@string/title_activity_qr_code"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.cj.tapblok.NfcWriteActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.cj.tapblok.NfcHandlerActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/vnd.app.olauncher.silo" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.cj.tapblok.ShortcutHandlerActivity"
+            android:exported="true"
+            android:label="@string/title_activity_shortcut_handler"
+            android:permission="app.olauncher.permission.START_MONITORING"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="portrait"
+            tools:replace="screenOrientation" />
+
+        <service
+            android:name="com.cj.tapblok.AppMonitoringService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Monitors selected app usage to provide Silo blocking." />
+        </service>
+        <service
+            android:name="com.cj.tapblok.WebsiteBlockVpnService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Filters DNS requests locally to block user-configured website domains during disconnect sessions." />
+        </service>
+        <service
+            android:name="com.cj.tapblok.BlockedWindowAccessibilityService"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/blocked_window_accessibility_service" />
+        </service>
+
+        <receiver
+            android:name="com.cj.tapblok.BootCompletedReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.cj.tapblok.LocationTransitionReceiver"
+            android:exported="false" />
+        <receiver
+            android:name="com.cj.tapblok.TapBlokDeviceAdminReceiver"
+            android:description="@string/device_admin_description"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/homeblok_device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
 
 </manifest>

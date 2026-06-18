@@ -5,19 +5,45 @@ gradle = "8.9.1"
 kotlinStdlib = "2.1.20"
 lifecycleExtensions = "2.2.0"
 lifecycleViewmodelKtx = "2.9.0"
+activity = "1.10.1"
+activityCompose = "1.10.1"
+coilCompose = "2.7.0"
+composeBom = "2025.05.00"
 material = "1.12.0"
 navigationFragmentKtx = "2.9.0"
 recyclerview = "1.4.0"
+room = "2.8.1"
+zxingCore = "3.5.3"
+zxingAndroidEmbedded = "4.3.0"
+playServicesLocation = "21.3.0"
 workRuntimeKtx = "2.10.1"
 [libraries]
+activity = { module = "androidx.activity:activity", version.ref = "activity" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinStdlib" }
+compose-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlinStdlib" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
 lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExtensions" }
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleViewmodelKtx" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxingCore" }

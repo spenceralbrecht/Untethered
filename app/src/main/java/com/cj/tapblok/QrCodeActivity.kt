@@ -1,0 +1,138 @@
+package com.cj.tapblok
+
+import app.olauncher.BuildConfig
+import app.olauncher.R
+
+import android.graphics.Bitmap
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.core.graphics.createBitmap
+import com.cj.tapblok.ui.theme.TapBlokTheme
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.QRCodeWriter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+class QrCodeActivity : ComponentActivity() {
+
+    companion object {
+        const val QR_CODE_CONTENT = "TAPBLOK_TOGGLE"
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            TapBlokTheme {
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    text = "Unlock QR",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
+                            navigationIcon = {
+                                IconButton(onClick = { finish() }) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                                }
+                            }
+                        )
+                    }
+                ) { padding ->
+                    QrCodeScreen(
+                        modifier = Modifier.padding(padding),
+                        content = UnlockTokenManager.getOrCreateUnlockToken(this)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun QrCodeScreen(modifier: Modifier = Modifier, content: String) {
+    val qrResult by produceState<Result<Bitmap>?>(initialValue = null, producer = {
+        value = withContext(Dispatchers.Default) {
+            runCatching { generateQrCode(content) ?: error("Failed to generate QR code") }
+        }
+    })
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 28.dp, vertical = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        when (val result = qrResult) {
+            null -> CircularProgressIndicator()
+            else -> {
+                val bitmap = result.getOrNull()
+                if (bitmap != null) {
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = "QR Code",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .widthIn(max = 320.dp)
+                            .aspectRatio(1f),
+                        contentScale = ContentScale.Fit
+                    )
+                } else {
+                    Text(
+                        text = "Failed to generate QR code.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "Scan this code to start or stop a monitoring session.",
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+private fun generateQrCode(content: String): Bitmap? {
+    val writer = QRCodeWriter()
+    return try {
+        val hints = mapOf(EncodeHintType.MARGIN to 1)
+        val bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, 512, 512, hints)
+        val width = bitMatrix.width
+        val height = bitMatrix.height
+        val bmp = createBitmap(width, height, Bitmap.Config.RGB_565)
+        val pixels = IntArray(width * height) { i ->
+            if (bitMatrix[i % width, i / width]) android.graphics.Color.BLACK else android.graphics.Color.WHITE
+        }
+        bmp.setPixels(pixels, 0, width, 0, 0, width, height)
+        bmp
+    } catch (e: Exception) {
+        Log.e("QrCodeActivity", "Failed to generate QR code", e)
+        null
+    }
+}

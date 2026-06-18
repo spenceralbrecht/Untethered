@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         super.onUserLeaveHint()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         // Home button for recents feature disabled
         // val alreadyHome = navController.currentDestination?.id == R.id.mainFragment
         backToHomeScreen()
