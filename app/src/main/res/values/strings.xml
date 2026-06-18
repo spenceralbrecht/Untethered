@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Olauncher</string>
+    <string name="app_name" translatable="false">Silo</string>
     <string name="github" translatable="false">Github</string>
     <string name="lock_layout_description" translatable="false">lock layout description to be used a unique id to lock screen</string>
     <!-- Home button for recents feature disabled -->
@@ -20,6 +20,8 @@
     <string name="tag_8" translatable="false">8</string>
     <string name="time_spent_min" translatable="false"><b>%1$sm</b></string>
     <string name="time_spent_hour" translatable="false">%1$sh %2$sm</string>
+    <string name="year_progress_weeks">%1$d/%2$d weeks</string>
+    <string name="year_progress_description">%1$d of %2$d weeks shown for this year</string>
 
     <string name="x_twitter" translatable="false">X/Twitter</string>
     <string name="instagram" translatable="false">Instagram</string>

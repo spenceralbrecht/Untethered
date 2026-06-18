@@ -5,6 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +25,8 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.widget.FrameLayout
-import android.widget.TextView
+import android.widget.GridLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -48,6 +59,7 @@ import app.olauncher.helper.showToast
 import app.olauncher.listener.OnSwipeTouchListener
 import app.olauncher.listener.ViewSwipeTouchListener
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -61,6 +73,9 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val homeShortcutCodes = mutableSetOf<String>()
+    private val grayscaleIconFilter by lazy {
+        ColorMatrixColorFilter(ColorMatrix().apply { setSaturation(0f) })
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -253,14 +268,6 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             gravity = horizontalGravity or Gravity.TOP
         }
         binding.dateTimeLayout.gravity = Gravity.CENTER_HORIZONTAL
-        binding.homeApp1.gravity = Gravity.CENTER
-        binding.homeApp2.gravity = Gravity.CENTER
-        binding.homeApp3.gravity = Gravity.CENTER
-        binding.homeApp4.gravity = Gravity.CENTER
-        binding.homeApp5.gravity = Gravity.CENTER
-        binding.homeApp6.gravity = Gravity.CENTER
-        binding.homeApp7.gravity = Gravity.CENTER
-        binding.homeApp8.gravity = Gravity.CENTER
     }
 
     private fun populateDateTime() {
@@ -279,7 +286,42 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
                 dateText = getString(R.string.day_battery, dateText, battery)
         }
         binding.date.text = dateText.replace(".,", ",")
+        populateYearProgress()
     }
+
+    private fun populateYearProgress() {
+        val calendar = Calendar.getInstance()
+        val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+        val daysInYear = calendar.getActualMaximum(Calendar.DAY_OF_YEAR)
+        val totalWeeks = (daysInYear + 6) / 7
+        val elapsedWeeks = ((dayOfYear + 6) / 7).coerceIn(0, totalWeeks)
+
+        binding.yearProgressGraph.removeAllViews()
+        binding.yearProgressGraph.columnCount = 18
+
+        repeat(totalWeeks) { index ->
+            binding.yearProgressGraph.addView(
+                View(requireContext()).apply {
+                    background = weekCellBackground(index < elapsedWeeks)
+                    layoutParams = GridLayout.LayoutParams().apply {
+                        width = 5.dpToPx()
+                        height = 5.dpToPx()
+                        setMargins(1.dpToPx(), 1.dpToPx(), 1.dpToPx(), 1.dpToPx())
+                    }
+                }
+            )
+        }
+        binding.yearProgressLabel.text = getString(R.string.year_progress_weeks, elapsedWeeks, totalWeeks)
+        binding.yearProgressLayout.contentDescription =
+            getString(R.string.year_progress_description, elapsedWeeks, totalWeeks)
+    }
+
+    private fun weekCellBackground(isElapsed: Boolean): Drawable =
+        GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = 2.dpToPx().toFloat()
+            setColor(if (isElapsed) Color.WHITE else Color.argb(45, 255, 255, 255))
+        }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun populateScreenTime() {
@@ -321,63 +363,63 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
         homeShortcutCodes.clear()
 
         binding.homeApp1.visibility = View.VISIBLE
-        if (!setHomeAppText(binding.homeApp1, prefs.appName1, prefs.appPackage1, prefs.appUser1, prefs.isShortcut1, prefs.shortcutId1)) {
+        if (!setHomeAppIcon(binding.homeApp1, prefs.appName1, prefs.appPackage1, prefs.appUser1, prefs.isShortcut1, prefs.shortcutId1)) {
             prefs.appName1 = ""
             prefs.appPackage1 = ""
         }
         if (homeAppsNum == 1) return
 
         binding.homeApp2.visibility = View.VISIBLE
-        if (!setHomeAppText(binding.homeApp2, prefs.appName2, prefs.appPackage2, prefs.appUser2, prefs.isShortcut2, prefs.shortcutId2)) {
+        if (!setHomeAppIcon(binding.homeApp2, prefs.appName2, prefs.appPackage2, prefs.appUser2, prefs.isShortcut2, prefs.shortcutId2)) {
             prefs.appName2 = ""
             prefs.appPackage2 = ""
         }
         if (homeAppsNum == 2) return
 
         binding.homeApp3.visibility = View.VISIBLE
-        if (!setHomeAppText(binding.homeApp3, prefs.appName3, prefs.appPackage3, prefs.appUser3, prefs.isShortcut3, prefs.shortcutId3)) {
+        if (!setHomeAppIcon(binding.homeApp3, prefs.appName3, prefs.appPackage3, prefs.appUser3, prefs.isShortcut3, prefs.shortcutId3)) {
             prefs.appName3 = ""
             prefs.appPackage3 = ""
         }
         if (homeAppsNum == 3) return
 
         binding.homeApp4.visibility = View.VISIBLE
-        if (!setHomeAppText(binding.homeApp4, prefs.appName4, prefs.appPackage4, prefs.appUser4, prefs.isShortcut4, prefs.shortcutId4)) {
+        if (!setHomeAppIcon(binding.homeApp4, prefs.appName4, prefs.appPackage4, prefs.appUser4, prefs.isShortcut4, prefs.shortcutId4)) {
             prefs.appName4 = ""
             prefs.appPackage4 = ""
         }
         if (homeAppsNum == 4) return
 
         binding.homeApp5.visibility = View.VISIBLE
-        if (!setHomeAppText(binding.homeApp5, prefs.appName5, prefs.appPackage5, prefs.appUser5, prefs.isShortcut5, prefs.shortcutId5)) {
+        if (!setHomeAppIcon(binding.homeApp5, prefs.appName5, prefs.appPackage5, prefs.appUser5, prefs.isShortcut5, prefs.shortcutId5)) {
             prefs.appName5 = ""
             prefs.appPackage5 = ""
         }
         if (homeAppsNum == 5) return
 
         binding.homeApp6.visibility = View.VISIBLE
-        if (!setHomeAppText(binding.homeApp6, prefs.appName6, prefs.appPackage6, prefs.appUser6, prefs.isShortcut6, prefs.shortcutId6)) {
+        if (!setHomeAppIcon(binding.homeApp6, prefs.appName6, prefs.appPackage6, prefs.appUser6, prefs.isShortcut6, prefs.shortcutId6)) {
             prefs.appName6 = ""
             prefs.appPackage6 = ""
         }
         if (homeAppsNum == 6) return
 
         binding.homeApp7.visibility = View.VISIBLE
-        if (!setHomeAppText(binding.homeApp7, prefs.appName7, prefs.appPackage7, prefs.appUser7, prefs.isShortcut7, prefs.shortcutId7)) {
+        if (!setHomeAppIcon(binding.homeApp7, prefs.appName7, prefs.appPackage7, prefs.appUser7, prefs.isShortcut7, prefs.shortcutId7)) {
             prefs.appName7 = ""
             prefs.appPackage7 = ""
         }
         if (homeAppsNum == 7) return
 
         binding.homeApp8.visibility = View.VISIBLE
-        if (!setHomeAppText(binding.homeApp8, prefs.appName8, prefs.appPackage8, prefs.appUser8, prefs.isShortcut8, prefs.shortcutId8)) {
+        if (!setHomeAppIcon(binding.homeApp8, prefs.appName8, prefs.appPackage8, prefs.appUser8, prefs.isShortcut8, prefs.shortcutId8)) {
             prefs.appName8 = ""
             prefs.appPackage8 = ""
         }
     }
 
-    private fun setHomeAppText(
-        textView: TextView,
+    private fun setHomeAppIcon(
+        imageView: ImageView,
         appName: String,
         packageName: String,
         userString: String,
@@ -400,31 +442,49 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
             try {
                 val shortcuts = launcherApps.getShortcuts(query, userHandle)
                 // Check if our shortcut still exists
-                if (shortcuts?.any { it.id == shortcutId } == true) {
-                    textView.text = appName.toShortcutCode(homeShortcutCodes)
-                    textView.contentDescription = appName
+                val shortcut = shortcuts?.firstOrNull { it.id == shortcutId }
+                if (shortcut != null) {
+                    val icon = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        launcherApps.getShortcutIconDrawable(shortcut, resources.displayMetrics.densityDpi)
+                    } else null
+                    applyHomeIcon(imageView, icon, appName)
                     return true
                 }
-                textView.text = ""
-                textView.contentDescription = null
+                clearHomeIcon(imageView)
                 return false
             } catch (e: Exception) {
                 e.printStackTrace()
-                textView.text = ""
-                textView.contentDescription = null
+                clearHomeIcon(imageView)
                 return false
             }
         }
 
         // Regular app check
         if (isPackageInstalled(requireContext(), packageName, userString)) {
-            textView.text = appName.toShortcutCode(homeShortcutCodes)
-            textView.contentDescription = appName
+            val icon = requireContext()
+                .getSystemService(Context.LAUNCHER_APPS_SERVICE)
+                .let { it as LauncherApps }
+                .getActivityList(packageName, userHandle)
+                .firstOrNull()
+                ?.getIcon(resources.displayMetrics.densityDpi)
+            applyHomeIcon(imageView, icon, appName)
             return true
         }
-        textView.text = ""
-        textView.contentDescription = null
+        clearHomeIcon(imageView)
         return false
+    }
+
+    private fun applyHomeIcon(imageView: ImageView, icon: Drawable?, appName: String) {
+        val drawable = icon ?: appName.toShortcutCode(homeShortcutCodes).toCodeDrawable()
+        imageView.setImageDrawable(drawable)
+        imageView.colorFilter = grayscaleIconFilter
+        imageView.imageAlpha = 230
+        imageView.contentDescription = appName
+    }
+
+    private fun clearHomeIcon(imageView: ImageView) {
+        imageView.setImageDrawable(null)
+        imageView.contentDescription = null
     }
 
     private fun String.toShortcutCode(usedCodes: MutableSet<String>): String =
@@ -454,21 +514,44 @@ class HomeFragment : Fragment(), View.OnClickListener, View.OnLongClickListener 
 
     private fun hideHomeApps() {
         binding.homeApp1.visibility = View.GONE
+        binding.homeApp1.setImageDrawable(null)
         binding.homeApp1.contentDescription = null
         binding.homeApp2.visibility = View.GONE
+        binding.homeApp2.setImageDrawable(null)
         binding.homeApp2.contentDescription = null
         binding.homeApp3.visibility = View.GONE
+        binding.homeApp3.setImageDrawable(null)
         binding.homeApp3.contentDescription = null
         binding.homeApp4.visibility = View.GONE
+        binding.homeApp4.setImageDrawable(null)
         binding.homeApp4.contentDescription = null
         binding.homeApp5.visibility = View.GONE
+        binding.homeApp5.setImageDrawable(null)
         binding.homeApp5.contentDescription = null
         binding.homeApp6.visibility = View.GONE
+        binding.homeApp6.setImageDrawable(null)
         binding.homeApp6.contentDescription = null
         binding.homeApp7.visibility = View.GONE
+        binding.homeApp7.setImageDrawable(null)
         binding.homeApp7.contentDescription = null
         binding.homeApp8.visibility = View.GONE
+        binding.homeApp8.setImageDrawable(null)
         binding.homeApp8.contentDescription = null
+    }
+
+    private fun String.toCodeDrawable(): Drawable {
+        val size = 32.dpToPx()
+        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+            textAlign = Paint.Align.CENTER
+            textSize = 15.dpToPx().toFloat()
+            typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+        }
+        val y = (size / 2f) - ((paint.descent() + paint.ascent()) / 2f)
+        canvas.drawText(this, size / 2f, y, paint)
+        return BitmapDrawable(resources, bitmap)
     }
 
     private fun applyShortcutSizing() {
